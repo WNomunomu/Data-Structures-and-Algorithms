@@ -10,24 +10,40 @@ struct Node { int parent, leftChild, rightSibling; };
 Node Tree[MAX];
 int n, Depth[MAX];
 
+// void printChildlen(int parentNodeId) {
+//   Node parentNode = Tree[parentNodeId];
+//   cout << "[";
+//   Node node = Tree[parentNode.leftChild];
+//   // int rightSiblingId;
+//   for (int i = 0; node.rightSibling != NIL; i++) {
+//     if (i == 0) {
+//       if (parentNode.leftChild != NIL) {
+//         cout << parentNode.leftChild;
+//       }
+//       node = Tree[parentNode.leftChild];
+//     }
+//     else {
+//       cout << ", " << node.rightSibling;
+//       node = Tree[node.rightSibling];
+//     }
+//   }
+//   cout << "]";
+// }
+
 void printChildlen(int parentNodeId) {
-  Node parentNode = Tree[parentNodeId];
-  cout << "[";
-  Node node = Tree[parentNode.leftChild];
-  // int rightSiblingId;
-  for (int i = 0; node.rightSibling != NIL; i++) {
-    if (i == 0) {
-      if (parentNode.leftChild != NIL) {
-        cout << parentNode.leftChild;
-      }
-      node = Tree[parentNode.leftChild];
+    cout << "[";
+    if (Tree[parentNodeId].leftChild != NIL) {
+        // Print first child
+        cout << Tree[parentNodeId].leftChild;
+        
+        // Print remaining siblings
+        int currentChild = Tree[Tree[parentNodeId].leftChild].rightSibling;
+        while (currentChild != NIL) {
+            cout << ", " << currentChild;
+            currentChild = Tree[currentChild].rightSibling;
+        }
     }
-    else {
-      cout << ", " << node.rightSibling;
-      node = Tree[node.rightSibling];
-    }
-  }
-  cout << "]";
+    cout << "]";
 }
 
 void printNode(int id) {
