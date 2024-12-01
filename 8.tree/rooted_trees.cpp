@@ -46,7 +46,7 @@ void printChildlen(int parentNodeId) {
     cout << "]";
 }
 
-void printNode(int id) {
+void printTree(int id) {
   Node node = Tree[id];
   int depth = Depth[id];
   cout << "node " << id << ": ";
@@ -110,7 +110,7 @@ int main() {
 
   // rep(i, n) cout << Depth[i];
 
-  rep(i, n) printNode(i);
+  rep(i, n) printTree(i);
 
   return 0;
 }
