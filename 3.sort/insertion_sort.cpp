@@ -1,63 +1,45 @@
-#include<iostream>
+#include <iostream>
+#include <vector>
 using namespace std;
 
-#define MAX 100005
-#define NIL -1
-#define rep(i, n) for (int i = 0; (i) < (n); ++(i))
+#define rep(i, n) for (int i = 0; i < n; i++)
 
-void printArray(int A[], int n) {
-  rep(i, n) {
-    if (i != 0) {
-      cout << " ";
-    }
-    cout << A[i];
-    if (i == n - 1) {
-      cout << "\n";
-    }
-  }
-}
+int n;
+vector<int> A;
 
-void insertionSort(int A[], int n) {
+void insertionSort() {
   int sorted = 0;
-  int replaceNum;
+  rep(i, n) {
 
-  for (int i = 1; i < n; i++) {
-    int key = A[i];
-    replaceNum = i - 1;
-    while (key < A[replaceNum] && replaceNum >= 0) {
-      A[replaceNum + 1] = A[replaceNum];
-      A[replaceNum] = key;
-      replaceNum--;
+    rep(i, n) {
+      if (i != 0) cout << ' ';
+      cout << A[i];
     }
-    printArray(A, n);
+    cout << endl;
+    
+    int v = A[sorted + 1];
+
+    for (int j = sorted; j >= 0; j--) {
+      if (A[j] > v) {
+        A[j + 1] = A[j];
+        A[j] = v;
+      }
+    }
+
+    sorted++;
   }
 }
 
 int main() {
-  int n, value;
-  
   cin >> n;
 
-  int A[n];
+  A.resize(n);
 
   rep(i, n) {
-    cin >> value;
-    A[i] = value;
+    cin >> A[i];
   }
 
-  A[n] = NIL;
-
-  rep(i, n) {
-    if (i != 0) {
-      cout << " ";
-    }
-    cout << A[i];
-    if (i == n - 1) {
-      cout << "\n";
-    }
-  }
-
-  insertionSort(A, n);
+  insertionSort();
 
   return 0;
 }
