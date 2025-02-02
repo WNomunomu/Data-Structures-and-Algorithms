@@ -1,42 +1,45 @@
-#include<iostream>
+#include <iostream>
+#include <vector>
 using namespace std;
 
-#define MAX 100005
-#define NIL -1
-#define rep(i, n) for (int i = 0; (i) < (n); ++(i))
+#define rep(i, n) for (int i = 0; i < n; i++)
 
+int n;
+vector<int> A;
 int swapCount = 0;
 
-void bubbleSort(int A[], int n) {
-  int flag = 1;
-  int unSortedFirst = 0;
-  while (flag) {
-    flag = 0;
-    for (int j = n - 1; j > unSortedFirst; j--) {
-      if (A[j] < A[j - 1]) {
-        swap(A[j], A[j - 1]);
+void bubbleSort() {
+
+  bool flag = true;
+
+  while(flag) {
+    flag = false;
+    for (int i = n - 1; i >= 0; i--) {
+      if (A[i - 1] > A[i]) {
+        swap(A[i - 1], A[i]);
+        flag = true;
         swapCount++;
-        flag = 1;
       }
     }
-    unSortedFirst++;
-  }
+  }  
+
 }
 
 int main() {
-  int n;
   cin >> n;
-  int A[n];
+  A.resize(n);
   rep(i, n) cin >> A[i];
-  
-  bubbleSort(A, n);
+
+  bubbleSort();
 
   rep(i, n) {
-    if (i != n - 1) cout << A[i] << " ";
-    else cout << A[i] << "\n";
+    if (i != 0) cout << ' ';
+    cout << A[i];
   }
 
-  cout << swapCount << "\n";
+  cout << endl;
+
+  cout << swapCount << endl;
 
   return 0;
 }
