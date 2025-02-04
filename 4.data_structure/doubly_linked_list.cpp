@@ -25,7 +25,7 @@ void insertNode(int x) {
   Node* node = (Node*)malloc(sizeof(Node));
   node->key = x;
   node->prev = nil;
-  nil->next->prev = node;
+  nil->next->prev = node; // 最初の insert、つまり nil しかない時には nil->prev に最初に insert した node (lastNode)が追加される。
   node->next = nil->next;
   nil->next = node;
 }
