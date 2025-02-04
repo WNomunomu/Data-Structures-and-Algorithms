@@ -1,30 +1,34 @@
-#include<stdio.h>
+#include <iostream>
+#include <vector>
+using namespace std;
 
-bool linearSearch(int t, int S[], int n) {
-  for (int i=0; i<n; i++) {
-    if (S[i] == t) {
-      return true;
-    }
+#define rep(i, n) for (int i = 0; i < n; i++)
+
+int n;
+int count = 0;
+
+void linearSearch(int S[], int x) {
+  rep(i, n) {
+    if (S[i] == x) {
+      count++;
+      return;
+    } 
   }
-  return false;
-}
+};
 
 int main() {
-  int n, q;
-  int sum = 0;
-
-  scanf("%d", &n);
+  int q;
+  cin >> n;
   int S[n];
-  for (int i=0; i<n; i++) scanf("%d", &S[i]);
-  scanf("%d", &q);
-  int T[q];
-  for (int i=0; i<q; i++) scanf("%d", &T[i]);
-
-  for (int i=0; i<q; i++) {
-    if (linearSearch(T[i], S, n)) {
-      sum++;
-    }
+  rep(i, n) cin >> S[i];
+  cin >> q;
+  int t;
+  rep(i, q) {
+    cin >> t;
+    linearSearch(S, t);
   }
 
-  printf("%d\n", sum);
+  cout << count << endl;
+
+  return 0;
 }
