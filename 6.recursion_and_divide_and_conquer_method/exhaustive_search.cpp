@@ -1,29 +1,29 @@
-#include<stdio.h>
+#include <iostream>
+#include <vector>
 using namespace std;
 
-int A[50], n;
+#define rep(i, n) for (int i = 0; i < n; i++)
 
-bool solve(int i, int m) {
-  if (i > n) return false;
-  if (m == 0) return true;
-  bool res = solve(i+1, m) || solve(i+1, m-A[i]);
-  return res;
+int n;
+vector<int> A;
+
+bool isCreatableNumber(int x, int i = 0) {
+  if (x == 0) return true;
+  if (i == n) return false;
+  return isCreatableNumber(x, i + 1) || isCreatableNumber(x - A[i], i + 1);
 }
 
 int main() {
-  int q;
-  scanf("%d", &n);
-  for (int i=0; i<n; i++) scanf("%d", &A[i]);
-  scanf("%d", &q);
-  int m[q];
-  for (int i=0; i<q; i++) scanf("%d", &m[i]);
-
-  for (int i=0; i<q; i++) {
-    if (solve(0, m[i])) {
-      printf("yes\n");
-    }
-    else {
-      printf("no\n");
-    }
+  cin >> n;
+  A.resize(n);
+  rep(i, n) cin >> A[i];
+  int q, m;
+  cin >> q;
+  rep(i, q) {
+    cin >> m;
+    if (isCreatableNumber(m)) cout << "yes" << endl;
+    else cout << "no" << endl;
   }
+
+  return 0;
 }
