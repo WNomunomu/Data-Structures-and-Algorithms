@@ -1,39 +1,44 @@
-#include<stdio.h>
+#include<vector>
+#include<iostream>
 
-int partition(int A[], int n, int d) {
-  int index = 0;
+using namespace std;
 
-  for (int i = 0; i < n - 1; i++) {
-    if (A[i] <= d) {
-      int x = A[index];
-      A[index] = A[i];
-      A[i] = x;
-      index++;
+#define rep(i, n) for (int i = 0; i < n; i++)
+
+int n;
+vector<int> A;
+
+int largerThanX = -1, smallerThanX = -1;
+
+void partition(int x) {
+  rep(i, n - 1) {
+    if (A[i] <= x) {
+      swap(A[smallerThanX + 1], A[i]);
+      largerThanX++;
+      smallerThanX++;
+    }
+    else {
+      largerThanX++;
     }
   }
 
-  A[n - 1] = A[index];
-  A[index] = d;
-
-  return index;
+  swap(A[smallerThanX + 1], A[n - 1]);
 }
 
 int main() {
-  int n;
   scanf("%d", &n);
-  int A[n];
-  for (int i = 0; i < n; i++)
-    scanf("%d", &A[i]);
 
-  int d = A[n - 1];
+  A.resize(n);
 
-  int index = partition(A, n, d);
+  rep(i, n) scanf("%d", &A[i]);
 
-  for (int i = 0; i < n; i++) {
-    if (i > 0) {
-      printf(" ");
-    }
-    if (i == index) {
+  int x = A[n - 1];
+
+  partition(x);
+
+  rep(i, n) {
+    if (i != 0) printf(" ");
+    if (i == smallerThanX + 1) {
       printf("[%d]", A[i]);
     }
     else {
@@ -41,4 +46,6 @@ int main() {
     }
   }
   printf("\n");
+
+  return 0;
 }
