@@ -1,67 +1,71 @@
-#include <stdio.h>
+#include <iostream>
+using namespace std;
 
-#define INFTY 1000000001;
+#define rep(i, n) for (int i = 0; i < n; i++)
+
+#define INFTY 1000000001
+
+int n;
 int count = 0;
 
-void merge(int S[], int left, int mid, int right)
-{
-  int n1 = mid - left;
-  int n2 = right - mid;
-  int L[n1 + 1], R[n2 + 1];
+void merge(int A[], int left, int mid, int right) {
+  int L[mid - left + 1], R[right - mid + 1];
 
-  for (int i = 0; i < n1; i++)
-    L[i] = S[left + i];
-  for (int i = 0; i < n2; i++)
-    R[i] = S[mid + i];
+  rep(i, mid - left) L[i] = A[left + i];
+  rep(i, right - mid) R[i] = A[mid + i];
 
-  L[n1] = INFTY;
-  R[n2] = INFTY;
+  L[mid - left] = INFTY;
+  R[right - mid] = INFTY;
 
-  int j = 0, k = 0;
+  int j = 0;
+  int k = 0;
 
-  for (int i = left; i < right; i++) {
+  rep(i, right - left) {
     count++;
-    if (R[j] >= L[k]) {
-      S[i] = L[k];
-      k++;
-    }
-    else {
-      S[i] = R[j];
+    if (R[k] >= L[j]) {
+      A[left + i] = L[j];
       j++;
     }
+    else {
+      A[left + i] = R[k];
+      k++;
+    }
   }
+
 }
 
-void merge_sort(int S[], int left, int right) {
+void mergeSort(int A[], int left, int right) {
   // 要素数が1になったら分割しない
   if (left + 1 < right) {
-    int mid = (left + right) / 2;
-    merge_sort(S, left, mid);
-    merge_sort(S, mid, right);
-
-    // 最後のマージ
-    merge(S, left, mid, right);
+    int mid = (right + left) / 2;
+    mergeSort(A, left, mid);
+    mergeSort(A, mid, right);
+    merge(A, left, mid, right);
   }
 }
 
-int main()
-{
-  int n;
+int main() {
   scanf("%d", &n);
-  int S[n];
-  for (int i = 0; i < n; i++)
-    scanf("%d", &S[i]);
 
-  merge_sort(S, 0, n);
+  int A[n];
 
-  for (int i = 0; i < n; i++) {
-    if (i > 0)
-      printf(" ");
-    printf("%d", S[i]);
+  rep(i, n) scanf("%d", &A[i]);
+
+  mergeSort(A, 0, n);
+
+  // n = 5
+  // left = 0, mid = 2, right = 5
+  // 0  1  2  3  4
+  // 5, 3, 2, 1, 4
+
+  rep(i, n) {
+    if (i != 0) printf(" ");
+    printf("%d", A[i]);
   }
 
   printf("\n");
-
+  
   printf("%d\n", count);
 
+  return 0;
 }
