@@ -22,7 +22,7 @@ void merge(int A[], int left, int mid, int right) {
 
   rep(i, right - left) {
     count++;
-    if (R[k] >= L[j]) {
+    if (R[k] > L[j]) {
       A[left + i] = L[j];
       j++;
     }
