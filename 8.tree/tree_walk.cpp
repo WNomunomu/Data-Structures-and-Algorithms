@@ -1,74 +1,77 @@
 #include<iostream>
+
 using namespace std;
 
-#define MAX 100005
+#define rep(i, n) for(int i = 0; i < n; i++)
+
 #define NIL -1
-#define rep(i, n) for (int i = 0; (i) < (n); ++(i))
 
 struct Node {
-  int parentId;
-  int rightChildId;
-  int leftChildId;
+  int parent, leftChild, rightChild;
 };
 
-Node Tree[MAX];
-
-void preorderTreeWalk(int nodeId) {
-  Node node = Tree[nodeId];
-  cout << " " << nodeId;
-  if (node.leftChildId != NIL) preorderTreeWalk(node.leftChildId);
-  if (node.rightChildId != NIL) preorderTreeWalk(node.rightChildId);
+void initialize(Node Tree[], int n) {
+  rep(i, n) {
+    Tree[i].leftChild = Tree[i].rightChild = Tree[i].parent = NIL;
+  }
 }
 
-void inorderTreeWalk(int nodeId) {
-  Node node = Tree[nodeId];
-  if (node.leftChildId != NIL) inorderTreeWalk(node.leftChildId);
-  cout << " " << nodeId;
-  if (node.rightChildId != NIL) inorderTreeWalk(node.rightChildId);
+void preorder(int id, Node Tree[]) {
+  printf(" %d", id);
+  if (Tree[id].leftChild != NIL) preorder(Tree[id].leftChild, Tree);
+  if (Tree[id].rightChild != NIL) preorder(Tree[id].rightChild, Tree);
 }
 
-void postorderTreeWalk(int nodeId) {
-  Node node = Tree[nodeId];
-  if (node.leftChildId != NIL) postorderTreeWalk(node.leftChildId);
-  if (node.rightChildId != NIL) postorderTreeWalk(node.rightChildId);
-  cout << " " << nodeId;
+void inorder(int id, Node Tree[]) {
+  if (Tree[id].leftChild != NIL) inorder(Tree[id].leftChild, Tree);
+  printf(" %d", id);
+  if (Tree[id].rightChild != NIL) inorder(Tree[id].rightChild, Tree);
 }
 
-void printTreeOrder(int rootId) {
-  cout << "Preorder" << "\n";
-  preorderTreeWalk(rootId);
-  cout << "\n";
-  cout << "Inorder" << "\n";
-  inorderTreeWalk(rootId);
-  cout << "\n";
-  cout << "Postorder" << "\n";
-  postorderTreeWalk(rootId);
-  cout << "\n";
+void postorder(int id, Node Tree[]) {
+  if (Tree[id].leftChild != NIL) postorder(Tree[id].leftChild, Tree);
+  if (Tree[id].rightChild != NIL) postorder(Tree[id].rightChild, Tree);
+  printf(" %d", id);
+}
+
+int getRoot(int n, Node Tree[]) {
+  rep(i, n) {
+    if (Tree[i].parent == NIL) {
+      return i;
+    }
+  }
+  return NIL;
 }
 
 int main() {
-  int n, nodeId, leftChildId, rightChildId, rootId;
+  int n;
+  scanf("%d", &n);
+  Node Tree[n];
+  int Depth[n], Height[n];
+  int id, leftChild, rightChild;
 
-  cin >> n;
-
-  rep(i, n) {
-    Tree[i].parentId = Tree[i].rightChildId = Tree[i].leftChildId = NIL;
-  }
-
-  rep(i, n) {
-    cin >> nodeId >> leftChildId >> rightChildId;
-    Tree[nodeId].rightChildId = rightChildId;
-    Tree[nodeId].leftChildId = leftChildId;
-    if (rightChildId != NIL) Tree[rightChildId].parentId = nodeId; 
-    if (leftChildId != NIL) Tree[leftChildId].parentId = nodeId;
-  }
+  initialize(Tree, n);
 
   rep(i, n) {
-    if (Tree[i].parentId == NIL) rootId = i;
+    scanf("%d %d %d", &id, &leftChild, &rightChild);
+    Tree[id].leftChild = leftChild;
+    Tree[id].rightChild = rightChild;
+    Tree[leftChild].parent = Tree[rightChild].parent = id;
   }
 
-  printTreeOrder(rootId);
+  int root = getRoot(n, Tree);
 
+  if (root != NIL) {
+    printf("Preorder\n");
+    preorder(root, Tree);
+    printf("\n");
+    printf("Inorder\n");
+    inorder(root, Tree);
+    printf("\n");
+    printf("Postorder\n");
+    postorder(root, Tree);
+    printf("\n");
+  }
+  
   return 0;
 }
-
