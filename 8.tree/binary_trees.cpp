@@ -1,117 +1,122 @@
 #include<iostream>
+
 using namespace std;
 
-#define MAX 100005
+#define rep(i, n) for(int i = 0; i < n; i++)
+
 #define NIL -1
-#define rep(i, n) for (int i = 0; (i) < (n); ++(i))
 
-struct Node { int parentId, leftChildId, rightChildId; };
+struct Node {
+  int parent, leftChild, rightChild;
+};
 
-Node Tree[MAX];
-int n, Depth[MAX], Height[MAX];
-
-void printNodeType(int nodeId) {
-  Node node = Tree[nodeId];
-  if (node.parentId == NIL) cout << "root";
-  else if (node.leftChildId == NIL && node.rightChildId == NIL) cout << "leaf";
-  else cout << "internal node";
+void initialize(Node Tree[], int n) {
+  rep(i, n) {
+    Tree[i].leftChild = Tree[i].rightChild = Tree[i].parent = NIL;
+  }
 }
 
-int getDegree(int nodeId) {
-  Node node = Tree[nodeId];
-  int degree;
-  if (node.leftChildId == NIL && node.rightChildId == NIL) {
-    degree = 0;
+int getRoot(Node Tree[], int n) {
+  rep(i, n) {
+    if (Tree[i].parent == NIL) {
+      return i;
+    }
   }
-  else if (node.leftChildId != NIL && node.rightChildId != NIL) {
-    degree = 2;
+  return NIL;
+}
+
+void setDepth(int id, int depth, int Depth[], Node Tree[]) {
+  if (id != NIL) {
+    Depth[id] = depth;
+    setDepth(Tree[id].leftChild, depth + 1, Depth, Tree);
+    setDepth(Tree[id].rightChild, depth + 1, Depth, Tree);
+  }
+}
+
+int setHeight(int id, int Height[], Node Tree[]) {
+  int h1 = 0;
+  int h2 = 0;
+
+  if (Tree[id].leftChild != NIL) {
+    h1 = setHeight(Tree[id].leftChild, Height, Tree) + 1;
+  }
+  if (Tree[id].rightChild != NIL) {
+    h2 = setHeight(Tree[id].rightChild, Height, Tree) + 1;
+  }
+
+  return Height[id] = max(h1, h2);
+}
+
+int getSibling(int id, Node Tree[]) {
+  Node node = Tree[id];
+  if (node.parent == NIL) return NIL;
+  Node parent = Tree[node.parent];
+  if (id == parent.leftChild) {
+    return parent.rightChild;
   }
   else {
-    degree = 1;
+    return parent.leftChild;
   }
-
-  return degree;
 }
 
-int getSibling(int nodeId) {
-  Node node = Tree[nodeId];
-  if (node.parentId == NIL) {
-    return NIL;
+int getDegree(int id, Node Tree[]) {
+  Node node = Tree[id];
+  if (node.leftChild == NIL && node.rightChild == NIL) {
+    return 0;
   }
-  Node parentNode = Tree[node.parentId];
-  int siblingId;
-
-  if (parentNode.leftChildId == nodeId) {
-    siblingId = parentNode.rightChildId;
+  else if (node.leftChild != NIL && node.rightChild != NIL) {
+    return 2;
   }
-  else if (parentNode.rightChildId == nodeId) {
-    siblingId = parentNode.leftChildId;
+  else {
+    return 1;
   }
-  return siblingId;
 }
 
-void printTree(int nodeId) {
-  Node node = Tree[nodeId];
-  int siblingId = getSibling(nodeId);
-  int degree = getDegree(nodeId);
-  cout << "node " << nodeId << ": ";
-  cout << "parent = " << node.parentId << ", ";
-  cout << "sibling = " << siblingId << ", ";
-  cout << "degree = " << degree << ", ";
-  cout << "depth = " << Depth[nodeId] << ", ";
-  cout << "height = " << Height[nodeId] << ", ";
-  printNodeType(nodeId);
-  cout << "\n";
+string getNodeType(int id, Node Tree[]) {
+  Node node = Tree[id];
+  if (node.parent == NIL) {
+    return "root";
+  }
+  else if (node.leftChild == NIL && node.rightChild == NIL) {
+    return "leaf";
+  }
+  else {
+    return "internal node";
+  }
 }
 
-void setDepth(int nodeId, int depth = 0) {
-  Node node = Tree[nodeId];
-  Depth[nodeId] = depth;
-  if (node.leftChildId != NIL) setDepth(node.leftChildId, depth + 1);
-  if (node.rightChildId != NIL) setDepth(node.rightChildId, depth + 1); // else if ではダメ（どっちも計算させたいため）
-}
-
-int setHeight(int nodeId) {
-  Node node = Tree[nodeId];
-  int leftHeight = 0;
-  int rightHeight = 0;
-
-  if (node.leftChildId != NIL) {
-    leftHeight = setHeight(node.leftChildId) + 1;
-  }
-  if (node.rightChildId != NIL) {
-    rightHeight = setHeight(node.rightChildId) + 1;
-  }
-
-  return Height[nodeId] = ( leftHeight > rightHeight ? leftHeight : rightHeight);
+void printNodeData(int id, int Height[], int Depth[], Node Tree[]) {
+  int parent = Tree[id].parent;
+  int sibling = getSibling(id, Tree);
+  int degree = getDegree(id, Tree);
+  string nodeType = getNodeType(id, Tree);
+  printf("node %d: parent = %d, sibling = %d, degree = %d, depth = %d, height = %d, %s\n", id, parent, sibling, degree, Depth[id], Height[id], nodeType.c_str());
 }
 
 int main() {
   int n;
-  int nodeId, rightChildId, leftChildId, rootId;
-  cin >> n;
+  scanf("%d", &n);
+  Node Tree[n];
+  int Depth[n], Height[n];
+  int id, leftChild, rightChild;
 
-  rep(i, n) Tree[i].parentId = NIL;
+  initialize(Tree, n);
 
   rep(i, n) {
-    cin >> nodeId >> rightChildId >> leftChildId;
-    Tree[nodeId].rightChildId = rightChildId;
-    Tree[nodeId].leftChildId = leftChildId;
-    if (rightChildId != NIL) Tree[rightChildId].parentId = nodeId; 
-    if (leftChildId != NIL) Tree[leftChildId].parentId = nodeId;
+    scanf("%d %d %d", &id, &leftChild, &rightChild);
+    Tree[id].leftChild = leftChild;
+    Tree[id].rightChild = rightChild;
+    Tree[leftChild].parent = Tree[rightChild].parent = id;
   }
 
-  rep(i, n) {
-    if (Tree[i].parentId == NIL) {
-      rootId = i;
-    }
-  }
+  int root = getRoot(Tree, n);
 
-  setDepth(rootId);
-  setHeight(rootId);
+  setDepth(root, 0, Depth, Tree);
+
+  setHeight(root, Height, Tree);
 
   rep(i, n) {
-    printTree(i);
+    printNodeData(i, Height, Depth, Tree);
   }
 
   return 0;
