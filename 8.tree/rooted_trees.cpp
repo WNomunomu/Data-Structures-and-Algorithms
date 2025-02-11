@@ -1,116 +1,100 @@
 #include<iostream>
 using namespace std;
 
-#define MAX 100005
-#define NIL -1
-#define rep(i, n) for (int i = 0; (i) < (n); ++(i))
+#define rep(i, n) for(int i = 0; i < n; i++)
 
-struct Node { int parent, leftChild, rightSibling; };
+static const int NIL = -1;
 
-Node Tree[MAX];
-int n, Depth[MAX];
+struct Node {
+  int parent;
+  int leftChild;
+  int rightSibiling;
+};
 
-// void printChildlen(int parentNodeId) {
-//   Node parentNode = Tree[parentNodeId];
-//   cout << "[";
-//   Node node = Tree[parentNode.leftChild];
-//   // int rightSiblingId;
-//   for (int i = 0; node.rightSibling != NIL; i++) {
-//     if (i == 0) {
-//       if (parentNode.leftChild != NIL) {
-//         cout << parentNode.leftChild;
-//       }
-//       node = Tree[parentNode.leftChild];
-//     }
-//     else {
-//       cout << ", " << node.rightSibling;
-//       node = Tree[node.rightSibling];
-//     }
-//   }
-//   cout << "]";
-// }
-
-void printChildlen(int parentNodeId) {
-    cout << "[";
-    if (Tree[parentNodeId].leftChild != NIL) {
-        // Print first child
-        cout << Tree[parentNodeId].leftChild;
-        
-        // Print remaining siblings
-        int currentChild = Tree[Tree[parentNodeId].leftChild].rightSibling;
-        while (currentChild != NIL) {
-            cout << ", " << currentChild;
-            currentChild = Tree[currentChild].rightSibling;
-        }
-    }
-    cout << "]";
+void initialize(Node Tree[], int n) {
+  rep(i, n) {
+    Tree[i].parent = Tree[i].leftChild = Tree[i].rightSibiling = NIL;
+  }
 }
 
-void printTree(int id) {
-  Node node = Tree[id];
-  int depth = Depth[id];
-  cout << "node " << id << ": ";
-  cout << "parent = " << node.parent << ", ";
-  cout << "depth = " << depth << ", ";
+void setDepth(int id, int depth, int Depth[], Node Tree[]) {
+  if (id != NIL) {
+    Depth[id] = depth;
+    setDepth(Tree[id].rightSibiling, depth, Depth, Tree);
+    setDepth(Tree[id].leftChild, depth + 1, Depth, Tree);
+  }
+}
+
+int findRoot(int n, Node Tree[]) {
+  rep(i, n) {
+    if (Tree[i].parent == NIL) {
+      return i;
+    }
+  }
+  return NIL;
+}
+
+void printTypeOfNode(Node node) {
   if (node.parent == NIL) {
-    cout << "root, ";
+    printf("root");
   }
   else if (node.leftChild == NIL) {
-    cout << "leaf, ";
+    printf("leaf");
   }
   else {
-    cout << "internal node, ";
+    printf("internal node");
   }
-  printChildlen(id);
-  cout << "\n";
-
 }
 
-void setDepth(int nodeId, int depth) {
-  Depth[nodeId] = depth;
-  if (Tree[nodeId].rightSibling != NIL) setDepth(Tree[nodeId].rightSibling, depth);
-  if (Tree[nodeId].leftChild != NIL) setDepth(Tree[nodeId].leftChild, depth + 1);
+void printChildren(int id, Node Tree[]) {
+  Node node = Tree[id];
+  Node child = Tree[node.leftChild];
+  if (node.leftChild == NIL) {
+    printf("[]\n");
+  }
+  else {
+    printf("[%d", node.leftChild);
+    while (child.rightSibiling != NIL) {
+      printf(", %d", child.rightSibiling);
+      child = Tree[child.rightSibiling];
+    }
+    printf("]\n");
+  }
+}
+
+void printNodeData(int id, Node Tree[], int Depth[]) {
+    printf("node %d: parent = %d, depth = %d, ", id, Tree[id].parent, Depth[id]);
+    printTypeOfNode(Tree[id]);
+    printf(", ");
+    printChildren(id, Tree);
 }
 
 int main() {
-  int id, childNum, childId;
-  int leftChildId;
-  cin >> n;
-  rep(i, n) Tree[i].parent = Tree[i].leftChild = Tree[i].rightSibling = NIL;
+  int n;
+  scanf("%d", &n);
+  Node Tree[n];
+
+  initialize(Tree, n);
 
   rep(i, n) {
-    cin >> id >> childNum;
-
-    rep(i, childNum) {
-      if (childNum != 0) {
-        cin >> childId;
-
-        if (i == 0) {
-          Tree[id].leftChild = childId;
-        }
-        else {
-          Tree[leftChildId].rightSibling = childId;
-        }
-
-        leftChildId = childId;
-
-        Tree[childId].parent = id;
-      }
+    int id, k, child, prevChild;
+    scanf("%d %d", &id, &k);
+    rep(i, k) {
+      scanf("%d", &child);
+      if (i == 0) Tree[id].leftChild = child;
+      Tree[child].parent = id;
+      if (i != 0) Tree[prevChild].rightSibiling = child;
+      prevChild = child;
     }
   }
-  
 
-  int rootId;
+  int Depth[n];
+  int rootId = findRoot(n, Tree);
+  setDepth(rootId, 0, Depth, Tree);
 
-  rep(i, n) {
-    if (Tree[i].parent == NIL) rootId = i;
+  rep (i, n) {
+    printNodeData(i, Tree, Depth);
   }
-
-  setDepth(rootId, 0);
-
-  // rep(i, n) cout << Depth[i];
-
-  rep(i, n) printTree(i);
 
   return 0;
 }
