@@ -14,7 +14,6 @@ bool isPrinted = false;
 // 解答を表示する関数
 void printSolution(vector<vector<bool>>& fixedQueens, vector<int>& rowUsed,
                    vector<int>& columnUsed) {
-  cout << "printSolution" << endl;
   // 固定されたクイーンの位置と解答が一致するかチェック
   for (int row = 0; row < BOARD_SIZE; row++) {
     for (int col = 0; col < BOARD_SIZE; col++) {
